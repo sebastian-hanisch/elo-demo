@@ -1,5 +1,7 @@
 # Elo: die Stärke Partie für Partie – Streamlit-Demo
 
+**[→ Demo live ausprobieren](https://sebastianhanisch-elo-demo.streamlit.app/)**
+
 Siebtes Stück der **Ranking-Linie** (Konzepte-Demo), Nachfolger von `bradley-terry-demo`: Bradley-Terry schätzt die Stärken aus **allen Partien auf einmal**. Elo
 schreibt die Wertung **nach jeder Partie** fort, mit fester Verstärkung K. Das ist ein Filter; gemessen wird, was K kostet und bringt, wenn die Stärken stillstehen
 oder wandern. Das Vehikel ist das neutrale, simulierte Turnier der Wurzel (Anfangsstärken aus dem Generator Version 1, wortgleich; danach eine Irrfahrt der Stärken
@@ -137,4 +139,4 @@ Gebaut mit Streamlit, Plotly, numpy, pandas und fpdf2.
 
 ---
 
-Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zu den Demos: [Interaktive Demos](https://sebastianhanisch.net/demos.html).
+Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zur Reihe: [Ranking: von der Siegtabelle bis Learning to Rank](https://sebastianhanisch.net/konzepte-ranking.html).
