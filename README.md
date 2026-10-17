@@ -9,10 +9,11 @@ als lokales Modell); alles ist simuliert, es gibt keinen echten Datensatz.
 
 ## Kernfrage
 
-Wie wählt man K, und wann schlägt das Fortschreiben einen Schätzer über alle Partien? **K ist ein Kompromiss zwischen Rauschen und Verzögerung, den allein die Drift
-der Stärken bestimmt** (U-Form im Fehler; das beste K wächst mit der Drift wie die Verstärkung eines Kalman-Filters). **Elo gewinnt gegen Bradley-Terry über alle
-Partien ab etwa σ = 0,03 Drift je Runde und verliert ohne Drift.** Der Preis ist **Pfadabhängigkeit:** dieselben Partien in anderer Reihenfolge ergeben andere
-Wertungen und oft einen anderen Spitzenreiter. Ein **Anlauf-K** hilft einem Neuling, der vom Feld abweicht, und schadet einem, der ihm gleicht.
+Wie wählt man K, und wann schlägt das Fortschreiben einen Schätzer über alle Partien? **K ist ein Kompromiss zwischen Rauschen und Verzögerung, dessen beste Lage mit der Drift
+der Stärken wächst** (U-Form im Fehler; das beste K wächst mit der Drift, ungefähr proportional zur Verstärkung eines Kalman-Filters; es hängt auch an Stärkeabstand,
+Spielerzahl und Horizont). **Elo gewinnt gegen Bradley-Terry über alle Partien hier ab etwa σ = 0,03 Drift je Runde (8 Spieler, 150 Runden) und verliert ohne Drift
+meist.** Der Preis ist **Pfadabhängigkeit:** dieselben Partien in anderer Reihenfolge ergeben andere Wertungen und je nach K (bei K = 20 in einem Viertel der
+Umordnungen) einen anderen Spitzenreiter. Ein **Anlauf-K** hilft einem Neuling, der vom Feld abweicht, und schadet einem, der ihm gleicht.
 
 ## Modell
 
@@ -43,9 +44,9 @@ Alle Zahlen: 100 feste Läufe, 8 Spieler, Stärkeabstand 0,3, 150 Runden, wenn n
 |---|---|---|
 | U-Form von K (ohne Drift) | Verfolgungsfehler bei K = 2 / 5 / 10 / 20 / 40 / 80 / 160: 0,540 / 0,396 / 0,276 / **0,241** / 0,319 / 0,482 / 0,763. | `test_k_is_a_trade_off_with_a_u_shape` |
 | Bestes K nach Drift | σ = 0 / 0,03 / 0,06: K = 20; σ = 0,12: K = 40 (Fehler 0,505 gegen 0,607 bei K = 20). Bei σ = 0,06 ist K = 20 (0,353) kaum besser als K = 40 (0,357). | `test_the_best_k_moves_with_the_drift` |
-| Kalman-Verstärkung | K* bei σ = 0,03 / 0,06 / 0,12 / 0,24: 11,6 / 23,0 / 45,3 / 88,3 Punkte; bestes K im Raster nach Fehler 20 / 28 / 56 / 112, nach Log-Verlust 20 / 28 / 40 / 80. **Verdopplung von σ verdoppelt K\*; das beste K folgt**, liegt bei kleiner Drift aber über der Formel (Kaltstart, unsicherer Gegner). | `test_the_best_k_scales_like_the_kalman_gain` |
+| Kalman-Verstärkung | K* bei σ = 0,03 / 0,06 / 0,12 / 0,24: 11,6 / 23,0 / 45,3 / 88,3 Punkte; bestes K im Raster nach Fehler 20 / 28 / 56 / 112, nach Log-Verlust 20 / 28 / 40 / 80. **Verdopplung von σ verdoppelt K\*; das beste K folgt**, liegt aber über der Formel (vermutlich wegen Kaltstart und unsicherem Gegner, nicht getrennt gemessen). | `test_the_best_k_scales_like_the_kalman_gain` |
 | Elo gegen Bradley-Terry über alle Partien (Endfehler) | σ = 0: **Elo 0,222, BT 0,148** (τ 0,880 gegen 0,950); σ = 0,015: 0,239 / 0,192; **σ = 0,03: 0,249 / 0,258 (gleich)**; σ = 0,045: 0,292 / 0,352; σ = 0,06: 0,351 / 0,455 (τ 0,772 gegen 0,701); σ = 0,12 (K = 40): **0,552 / 0,924** (τ 0,821 gegen 0,631). | `test_elo_loses_without_drift_and_wins_with_it` |
-| Pfadabhängigkeit (konstante Stärken, 16 Reihenfolgen) | Streuung der Endwertung bei K = 5 / 10 / 20 / 40 / 80: 0,030 / 0,076 / **0,157** / 0,275 / 0,443 (bei K = 20 rund 27 Punkte); **anderer Spitzenreiter in 15 / 33 / 75 / 98 / 100 %** der Läufe. Bradley-Terry: Streuung 0. | `test_the_path_dependence_is_large` |
+| Pfadabhängigkeit (konstante Stärken, 16 Reihenfolgen) | Streuung der Endwertung bei K = 5 / 10 / 20 / 40 / 80: 0,030 / 0,076 / **0,157** / 0,275 / 0,443 (bei K = 20 rund 27 Punkte); in **15 / 33 / 75 / 98 / 100 %** der Läufe gibt es unter den 16 Umordnungen mindestens einen anderen Spitzenreiter (bei einer einzelnen Umordnung und K = 20: 25 %). Bradley-Terry: Streuung 0. | `test_the_path_dependence_is_large` |
 | Neuling im Feld (Abstand 1, nach 20 eigenen Partien) | Fehler bei K = 10 / 20 / 40: 0,733 / 0,531 / 0,340; **K = 20 mit Anlauf 60: 0,336**, Anlauf 120: 0,376; Mittel der ersten 40 Partien 0,569 (K = 20) gegen 0,412 (Anlauf 60). | `test_a_provisional_k_helps_a_newcomer_who_differs_from_the_field` |
 | … nach Abstand vom Feld (K = 20 fest gegen Anlauf 60) | Abstand 0: **0,201 gegen 0,318** (Anlauf schadet); 0,5: 0,295 / 0,322; 1,0: **0,531 / 0,336**; 2,0: **1,250 / 0,787**. | `test_the_provisional_k_hurts_a_newcomer_who_equals_the_field` |
 
@@ -54,7 +55,7 @@ Alle Zahlen: 100 feste Läufe, 8 Spieler, Stärkeabstand 0,3, 150 Runden, wenn n
 - **Anlauf-K bricht die Nullsumme:** Der Plan führte die Nullsumme als Orakel-Eigenschaft für Elo. Mit Anlauf-K gilt sie nicht mehr: Der Neuling mit größerem K gewinnt
   mehr, als der Gegner verliert (die Summe der Wertungen driftet). Der Test fand es beim Bau der Invarianten; die App sagt es, das Orakel prüft die Nullsumme nur für
   festes K (`test_a_provisional_k_breaks_the_zero_sum_and_the_sum_follows_the_k_difference`).
-- **Faktor Horizont:** Bei nur 60 Runden ist K = 40 überall am besten (Kaltstart); die Demo rechnet mit 150 Runden, das beste K ist dort 20 bis 40.
+- **Faktor Horizont:** Bei nur 60 Runden ist K = 40 bei wandernden Stärken am besten, ohne Drift K = 20 (Kaltstart); die Demo rechnet mit 150 Runden, das beste K ist dort 20 bis 40.
 - **Neuling in der Messreihe:** Dort ein neunter Spieler, hier Spieler 0 des Turniers (n bleibt höchstens 16); die Werte (0,531 und 0,336 nach 20 Partien) weichen deshalb
   von der Vorab-Messreihe (0,458 und 0,363) ab.
 - **Seed:** Der Standard-Seed 44 ist typisch (Endfehler Elo 0,35 gegen Bradley-Terry 0,51); der erste Seed (17) zeigte den untypischen Fall, in dem Bradley-Terry vorn liegt.
@@ -71,11 +72,11 @@ Alle Zahlen: 100 feste Läufe, 8 Spieler, Stärkeabstand 0,3, 150 Runden, wenn n
 
 ## Ehrliche Grenzen
 
-- **Elo verliert gegen Bradley-Terry, wenn die Stärken stillstehen** (Fehler 0,222 gegen 0,148); das steht neben dem Gewinn bei Drift.
-- **Das beste K hängt vom Horizont ab** (Kaltstart) und vom Fehlermaß; K nie als Konstante verkaufen. Der Wechsel bei σ ≈ 0,03 gilt für 150 Runden und 8 Spieler.
-- **Pfadabhängigkeit ist groß:** bei K = 20 wechselt in 75 % der Läufe der Spitzenreiter; Elo sagt nichts über die Sicherheit (Thema von Glicko).
+- **Elo verliert gegen Bradley-Terry meist, wenn die Stärken stillstehen** (Fehler 0,222 gegen 0,148; bei Abstand 0,1 steht es gleich); das steht neben dem Gewinn bei Drift.
+- **Das beste K hängt vom Horizont ab** (Kaltstart), vom Stärkeabstand, von der Spielerzahl und vom Fehlermaß; K nie als Konstante verkaufen. Der Wechsel bei σ ≈ 0,03 gilt für 150 Runden und 8 Spieler.
+- **Pfadabhängigkeit ist groß:** bei K = 20 gibt es in 75 % der Läufe unter 16 Umordnungen mindestens einen anderen Spitzenreiter (bei einer einzelnen Umordnung: 25 %); Elo sagt nichts über die Sicherheit (Thema von Glicko).
 - **Irrfahrt ist eine Annahme:** reale Stärken driften nicht unbedingt so; Verletzungen, Formkurven und Sprünge sind anders.
-- **Kalman-K\* ist ein Näherungswert** für einen Einzelspieler (Gegner auch unsicher) und liegt bei kleiner Drift unter dem besten K.
+- **Kalman-K\* ist ein Näherungswert** für einen Einzelspieler (Gegner auch unsicher) und liegt unter dem besten K.
 - **Anlauf-K hilft nur Abweichenden** und bricht die Nullsumme.
 - **Alles simuliert**, ein Generator (nur die Anfangsstärken), n ≤ 16.
 
@@ -92,7 +93,7 @@ Alle Zahlen: 100 feste Läufe, 8 Spieler, Stärkeabstand 0,3, 150 Runden, wenn n
 
 ## Tests
 
-80 Tests, rund drei Minuten (der erste Seitenaufruf rechnet die Experimente): Einheiten gegen die von Hand gerechneten Mini-Instanzen (`test_rating.py`, `test_drift.py`, `test_batch.py`), Generator (`test_generator.py`,
+99 Tests, rund 370 Sekunden (der erste Seitenaufruf rechnet die Experimente): Einheiten gegen die von Hand gerechneten Mini-Instanzen (`test_rating.py`, `test_drift.py`, `test_batch.py`), Generator (`test_generator.py`,
 wortgleich mit der Wurzel), **Orakel** (`test_oracle_elo.py`: Elo-Verlauf gegen die Lehrbuch-Formulierung in Elo-Punkten (10^(ΔR/400)) mit Anlauf-K und Neuling,
 Kalman-Verstärkung gegen die Riccati-Iteration und `scipy.linalg.solve_discrete_are`, Bradley-Terry gegen `scipy.optimize` und Reihenfolgen-Unabhängigkeit,
 Pfadabhängigkeit), Presets, ausblendbare Regler (`test_hidden_widget_state.py`), Analyse und Verdikte (`test_evaluation.py`), alle Zahlen dieses README

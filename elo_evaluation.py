@@ -157,7 +157,7 @@ def sweep_vs_bt(sigmas=C.SIGMA_BT, ks=C.K_SWEEP, seeds=C.SWEEP_SEEDS) -> list[di
 
 def sweep_order(ks=C.ORDER_KS, repeats=C.ORDER_REPEATS, seeds=C.ORDER_SEEDS) -> list[dict]:
     """Konstante Stärken: dieselben Partien in `repeats` zufälligen Reihenfolgen; Streuung der Endwertung je Spieler und Anteil der Läufe, in denen der Spitzenreiter
-    wechselt. Bradley-Terry über alle Partien ist unabhängig von der Reihenfolge (Streuung 0)."""
+    abweicht (mindestens zwei verschiedene unter den Umordnungen). Bradley-Terry über alle Partien ist unabhängig von der Reihenfolge (Streuung 0)."""
     rows = []
     for k in ks:
         sds, flips = [], []
@@ -231,8 +231,8 @@ def verdict_kalman(rows) -> tuple[str, str]:
     lo, hi = rows[0], rows[-1]
     return "info", (f"Die Kalman-Verstärkung für eine Irrfahrt wächst mit σ: {de(lo['k_star'], 0)} Punkte bei σ = {de(lo['sigma'])}, {de(hi['k_star'], 0)} bei "
                     f"σ = {de(hi['sigma'])}. Das beste K im Raster: {lo['best_error']} gegen {hi['best_error']} (nach Fehler), {lo['best_log_loss']} gegen "
-                    f"{hi['best_log_loss']} (nach Log-Verlust). Die Skalierung stimmt; der Wert liegt bei kleiner Drift unter dem besten K, weil der Kaltstart und "
-                    "der unsichere Gegner mitspielen. Die Verstärkung ist nur in der Simulation bekannt (σ, Information).")
+                    f"{hi['best_log_loss']} (nach Log-Verlust). Die Skalierung stimmt ungefähr; der Wert liegt unter dem besten K, vermutlich wegen Kaltstart und "
+                    "unsicherem Gegner (nicht getrennt gemessen). Die Verstärkung ist nur in der Simulation bekannt (σ, Information).")
 
 
 def verdict_bt(rows) -> tuple[str, str]:
@@ -248,7 +248,7 @@ def verdict_bt(rows) -> tuple[str, str]:
 def verdict_order(rows) -> tuple[str, str]:
     r = {x["k"]: x for x in rows}
     return "warning", (f"Dieselben Partien in anderer Reihenfolge ändern die Endwertung: bei K = 20 um {de(r[20]['sd'], 3)} (θ-Einheiten, rund "
-                       f"{de(r[20]['sd_points'], 0)} Punkte) je Spieler, und in {pct(r[20]['flip'])} % der Läufe wechselt der Spitzenreiter; bei K = 80 in "
+                       f"{de(r[20]['sd_points'], 0)} Punkte) je Spieler, und in {pct(r[20]['flip'])} % der Läufe gibt es unter 16 Umordnungen mindestens einen anderen Spitzenreiter; bei K = 80 in "
                        f"{pct(r[80]['flip'])} %. Bradley-Terry über alle Partien hängt nicht an der Reihenfolge (Streuung 0).")
 
 
@@ -256,6 +256,6 @@ def verdict_newcomer(rows, gaps) -> tuple[str, str]:
     r = {x["label"]: x for x in rows}
     g = {x["gap"]: x for x in gaps}
     return "info", (f"Ein Neuling mit Abstand 1 vom Feld: Fehler nach 20 eigenen Partien bei K = 20 {de(r['K = 20']['g20'], 3)}, mit Anlauf-K 60 "
-                    f"**{de(r['K = 20, Anlauf 60']['g20'], 3)}**, bei festem K = 40 {de(r['K = 40']['g20'], 3)}. Der Anlauf-K ist auf lange Sicht nicht lauter. Er "
+                    f"**{de(r['K = 20, Anlauf 60']['g20'], 3)}**, bei festem K = 40 {de(r['K = 40']['g20'], 3)}. Der Aufschlag des Anlauf-K klingt nur allmählich ab; gemessen sind die ersten 40 Partien des Neulings. Er "
                     f"hilft nur Abweichenden: bei Abstand 1 {de(g[1.0]['provisional'], 3)} statt {de(g[1.0]['fixed'], 3)}, bei Abstand 0 aber "
                     f"{de(g[0.0]['provisional'], 3)} statt {de(g[0.0]['fixed'], 3)}.")

@@ -57,7 +57,7 @@ def _vs_bt():
     return ev.sweep_vs_bt()
 
 
-@st.cache_data(show_spinner="Experiment rechnet über 50 feste Läufe mit je 16 Reihenfolgen …")
+@st.cache_data(show_spinner="Experiment rechnet über 40 feste Läufe mit je 16 Reihenfolgen …")
 def _order():
     return ev.sweep_order()
 
@@ -76,7 +76,7 @@ st.markdown(
     """
 Bradley-Terry schätzt die Stärken aus **allen Partien auf einmal**. Diese Demo ist das **siebte Stück der Ranking-Linie** und fragt, was passiert, wenn man die
 Wertung stattdessen **nach jeder Partie fortschreibt**: Elo. Das ist ein **Filter mit fester Verstärkung K**. Gemessen wird, dass K ein Kompromiss zwischen Rauschen
-und Verzögerung ist, den die **Drift der Stärken** bestimmt; dass Elo bei wandernden Stärken einen Schätzer über alle Partien schlägt und bei konstanten verliert;
+und Verzögerung ist, dessen beste Lage mit der **Drift der Stärken** wächst; dass Elo bei deutlich wandernden Stärken einen Schätzer über alle Partien schlägt und bei konstanten meist verliert;
 dass die Wertung am **Pfad** hängt; und dass ein **Neuling** ein größeres K braucht, wenn er vom Feld abweicht.
 
 Weiter unten: fünf **🔬 Experimente** mit Verdikt, **🚧 Wo die Annahmen enden** und der Expander **📐 Mathematische Formulierung**.
@@ -91,7 +91,7 @@ with st.expander("So rechnet Elo", expanded=True):
 2. **Die Aktualisierung:** Nach der Partie wandert die Wertung um K · (Ergebnis − Erwartung). Gewinnt der Favorit, passiert wenig; gewinnt der Außenseiter, viel. Was
    der eine gewinnt, verliert der andere: Bei gleichem K bleibt die **Summe der Wertungen gleich**; mit Anlauf-K gewinnt der Neuling mehr, als der Gegner verliert.
 3. **K ist die Verstärkung:** Groß heißt, die Wertung folgt schnell, aber auch dem Zufall; klein heißt ruhig, aber verspätet. Es gibt kein richtiges K ohne eine
-   Annahme darüber, wie schnell die Stärken wandern.
+   Annahme darüber, wie schnell die Stärken wandern (und über Stärkeabstand, Spielerzahl und Horizont).
 4. **Was fehlt:** Elo führt keine Unsicherheit mit und sieht die Zukunft nicht. Beides ist Thema der Folgestücke (Glicko, TrueSkill, WHR).
         """
     )
@@ -247,7 +247,7 @@ st.dataframe(pd.DataFrame([{"Drift σ": ev.de(r["sigma"], 3), "bestes K": r["k"]
                             "τ Elo": round(r["elo_tau"], 3), "τ Bradley-Terry": round(r["bt_tau"], 3)} for r in rows3]), hide_index=True, width="stretch")
 
 st.subheader("🔬 Experiment 4: Dieselben Partien, andere Reihenfolge")
-st.caption("8 Spieler (feste Instanz), 150 Runden, konstante Stärken; dieselben Partien in 16 zufälligen Reihenfolgen; 50 feste Läufe.")
+st.caption("8 Spieler (feste Instanz), 150 Runden, konstante Stärken; dieselben Partien in 16 zufälligen Reihenfolgen; 40 feste Läufe.")
 rows4 = _order()
 st.plotly_chart(build_order(rows4), width="stretch", key="exp4_chart")
 verdict(*ev.verdict_order(rows4))
@@ -270,9 +270,9 @@ st.markdown(
     """
 | Annahme | Was passiert, wenn sie verletzt ist | Wer setzt an |
 |---|---|---|
-| **Die Stärke ist konstant oder wandert langsam** | Springt sie oder driftet schnell, folgt eine feste Verstärkung nur mit Verzögerung oder Rauschen; das beste K hängt an der Drift (Experimente 1 und 2). | Glicko und TrueSkill |
+| **Die Stärke ist konstant oder wandert langsam** | Springt sie oder driftet schnell, folgt eine feste Verstärkung nur mit Verzögerung oder Rauschen; das beste K hängt an der Drift und, wie die README zeigt, auch an Stärkeabstand, Spielerzahl und Horizont (Experimente 1 und 2). | Glicko und TrueSkill |
 | **Ein K passt für alle** | Spieler mit wenigen Partien sind unsicherer als solche mit vielen; Elo führt keine Unsicherheit mit (Experiment 5). | Glicko und TrueSkill |
-| **Die Reihenfolge der Partien ist egal** | Elo ist pfadabhängig: dieselben Partien in anderer Reihenfolge geben andere Wertungen und oft einen anderen Spitzenreiter (Experiment 4). | WHR und TrueSkill Through Time |
+| **Die Reihenfolge der Partien ist egal** | Elo ist pfadabhängig: dieselben Partien in anderer Reihenfolge geben andere Wertungen und je nach K einen anderen Spitzenreiter (Experiment 4). | WHR und TrueSkill Through Time |
 | **Vergangene Partien bleiben, wie sie sind** | Eine Wertung wird nie rückwirkend verbessert; neue Information über frühere Gegner fließt nicht zurück. | WHR und TrueSkill Through Time |
 | **Es spielen Einzelne gegeneinander** | Teamergebnisse und Mehrpersonenspiele brauchen eine eigene Zerlegung. | Von der Mannschaft zum Einzelnen |
 | **Ein Spiel ist Sieg oder Niederlage** | Remis, Tore und Heimvorteil haben ein eigenes Modell. | Tore, Remis, Heimvorteil |
