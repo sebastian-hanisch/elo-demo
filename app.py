@@ -305,11 +305,11 @@ $-\log E_{ij}$ für den Sieger.
 **Literatur.**
 - Elo, A. E. (1978): *The Rating of Chessplayers, Past and Present.* Arco Publishing, New York (2. Auflage 1986; nach Katalogeinträgen, das Buch wurde nicht
   eingesehen).
-- Im Schach sind K = 40 für Neulinge, K = 20 und K = 10 für Spieler ab 2400 gebräuchlich (nach einem Blog zu den FIDE-Regeln ab 2024; das FIDE-Handbuch wurde nicht
-  eingesehen).
+- Im Schach sind K = 40 für Neulinge, K = 20 und K = 10 für Spieler ab 2400 gebräuchlich (FIDE Handbook, B.02 FIDE Rating Regulations, gültig ab 1. März 2024, Abschnitt 8.3.3,
+  eingesehen: K = 40 für Neue bis 30 Partien, K = 20 solange die Wertung unter 2400 bleibt, K = 10 sobald die veröffentlichte Wertung 2400 erreicht hat).
 - Glickman, M. E. (1999): Parameter estimation in large dynamic paired comparison experiments. *Journal of the Royal Statistical Society Series C (Applied
-  Statistics)* 48 (3), 377–394, doi:10.1111/1467-9876.00159 (nach dem Abstract: ein nichtiteratives Verfahren, das den Elo-Algorithmus um die Unsicherheit der
-  Schätzung erweitert; das Original wurde nicht eingesehen).
+  Statistics)* 48 (3), 377–394, doi:10.1111/1467-9876.00159 (ein nichtiteratives Verfahren, das den Elo-Algorithmus um die Unsicherheit der Schätzung erweitert;
+  im Volltext der Autorenseite glicko.net eingesehen: Zusammenfassung und Abschnitt 3.3, Gleichungen (9) bis (13), Elo als Sonderfall bei bekannten Gegnerstärken).
 - Steele, G. L., Lea, D., Flood, C. H. (2014): Fast splittable pseudorandom number generators. *OOPSLA 2014*, 453–472 (Zufallsstrom des Generators).
         """
     )
